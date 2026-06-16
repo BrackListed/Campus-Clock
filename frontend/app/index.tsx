@@ -11,7 +11,7 @@ export default function Index() {
         alignItems: "center",
       }}
     >
-      <Text className="text-xl font-bold text-blue-500">Hello, World Hey!</Text>
+      <Text className="text-2xl border-2 border-green-700">Hello, World Hey!</Text>
     </View>
   );
 }
