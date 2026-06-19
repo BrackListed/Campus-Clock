@@ -1,10 +1,17 @@
 import { AlarmClock, Bell, Calendar, ChevronDown } from "lucide-react-native";
-import { Image, Pressable, Text, TextInput, View } from "react-native";
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  Text,
+  TextInput,
+  View,
+} from "react-native";
 import "../global.css";
 
 export default function Index() {
   return (
-    <View className="flex-1 bg-slate-950 flex flex-col">
+    <ScrollView className="flex-1 bg-slate-950 flex flex-col">
       <View className="bg-slate-800/70 h-28 rounded-t-lg flex flex-row items-center justify-between">
         <View className="flex-row gap-2 px-4 py-3 h-full w-1/2 items-center">
           <Image
@@ -105,7 +112,34 @@ export default function Index() {
             </Pressable>
           </View>
         </View>
+        <View className="border border-white/10 rounded-lg mt-3 p-2 h-fit flex flex-col gap-3">
+          <Text className="text-zinc-50 font-semibold">Recent Assignments</Text>
+          <View className="flex bg-slate-800/70 flex-row justify-between p-2 rounded-lg border items-center border-white/10">
+            <Text className="text-zinc-50">History Essay - Due June 22 </Text>
+            <View className="p-2 bg-red-500 rounded-lg">
+              <Text className="text-zinc-50">HIGH</Text>
+            </View>
+          </View>
+
+          <View className="flex bg-slate-800/70 flex-row justify-between p-2 rounded-lg border items-center border-white/10">
+            <Text className="text-zinc-50">
+              Caluculus Homework - Due June 24
+            </Text>
+            <View className="p-2 bg-yellow-500 rounded-lg">
+              <Text className="text-zinc-50">MEDIUM</Text>
+            </View>
+          </View>
+
+          <View className="flex bg-slate-800/70 flex-row justify-between p-2 rounded-lg border items-center border-white/10">
+            <Text className="text-zinc-50">
+              Thesis Introduction - Due June 29
+            </Text>
+            <View className="p-2 bg-emerald-400 rounded-lg">
+              <Text className="text-zinc-50">LOW</Text>
+            </View>
+          </View>
+        </View>
       </View>
-    </View>
+    </ScrollView>
   );
 }
