@@ -1,5 +1,5 @@
 import { Bell } from "lucide-react-native";
-import { Image, Text, View } from "react-native";
+import { Image, Pressable, Text, View } from "react-native";
 import "../global.css";
 
 export default function Index() {
@@ -24,7 +24,7 @@ export default function Index() {
         </View>
       </View>
       <View className="flex-1 flex-col flex px-3 py-2 text-zinc-50 overflow-y-auto">
-        <View className="bg-slate-800/70 border-2 border-green-50 h-56 p-2 flex flex-col gap-1">
+        <View className="bg-slate-800/70 border-2 border-green-50 h-fit p-2 flex flex-col gap-1">
           <Text className="text-zinc-50 font-bold text-lg">
             School Commute Tracker
           </Text>
@@ -37,6 +37,22 @@ export default function Index() {
           <View className="flex flex-col gap-3 w-full border items-center border-white/10 rounded-xl py-1 h-28">
             <Text className="font-bold text-lime-300 text-xl">LIVE TIMER</Text>
             <Text className="font-bold text-lime-200 text-3xl">00:00:000</Text>
+          </View>
+          <View className="flex flex-row gap-5 items-center">
+            <Text className="text-zinc-50">Goal: Reaching School</Text>
+            <View className="flex flex-row gap-1 items-center">
+              <Text className="text-zinc-50">Map: </Text>
+              <View className="rounded-lg w-32 h-16 border-2 border-zinc-50"></View>
+            </View>
+          </View>
+          <View className="flex flex-row gap-5 items-center justify-between">
+            <Pressable className="bg-lime-300 px-4 py-2 rounded-lg">
+              <Text className="font-semibold">Stop & Save</Text>
+            </Pressable>
+            <View className="flex flex-row gap-1">
+              <Text className="text-zinc-50">Weekly Avg:</Text>
+              <Text className="text-lime-300">0 Mins</Text>
+            </View>
           </View>
         </View>
       </View>
