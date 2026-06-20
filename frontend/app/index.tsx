@@ -11,7 +11,7 @@ import {
   TextAlignJustify,
   User,
 } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Image,
   Pressable,
@@ -24,23 +24,27 @@ import { TimerPickerModal } from "react-native-timer-picker";
 import "../global.css";
 
 export default function Index() {
-  const [time, setTime] = useState(0);
-  const unformattedToday = new Date();
-  const today = unformattedToday.toLocaleTimeString("en-us", {
-    hour: "2-digit",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-  const isAM = unformattedToday.getHours() < 12;
-  const isPM = unformattedToday.getHours() > 12;
+  const [today, setToday] = useState<string | null>(null);
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const [toggleTimePicker, setToggleTimePicker] = useState(false);
   const [alarmString, setAlarmString] = useState<string | null>(null);
-  const [updatedAlarmString, setUpdatedAlarmString] = useState<string | null>(
-    null,
-  );
   const [alarmHours, setAlarmHours] = useState(0);
+  useEffect(() => {
+    function getTime() {
+      const unformattedToday = new Date();
+      const today = unformattedToday.toLocaleTimeString("en-us", {
+        hour: "2-digit",
+        minute: "2-digit",
+        second: "2-digit",
+        hour12: true,
+      });
+      setTimeout(() => {
+        getTime();
+        setToday(today);
+      }, 1000);
+    }
+    getTime();
+  }, []);
   const formatTime = ({
     hours,
     minutes,
@@ -61,7 +65,6 @@ export default function Index() {
     if (seconds !== undefined) {
       timeParts.push(seconds.toString().padStart(2, "0"));
     }
-
     return timeParts.join(":");
   };
 
