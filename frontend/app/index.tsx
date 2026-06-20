@@ -34,8 +34,11 @@ export default function Index() {
   const [alarmMinutes, setAlarmMinutes] = useState(0);
   const [alarmSeconds, setAlarmSeconds] = useState(0);
   const [toggleAlarm, setToggleAlarm] = useState(false);
+  const [toggleStopwatch, setToggleStopwatch] = useState(false);
   const player = useAudioPlayer(require("../assets/alarm.mp3"));
   const pulse = useRef(new Animated.Value(1)).current;
+  const [elapsedSeconds, setElapsedSeconds] = useState(0);
+  const [stopwatchTime, setStopwatchTime] = useState<string>();
   useEffect(() => {
     function getTime() {
       const unformattedToday = new Date();
@@ -68,9 +71,9 @@ export default function Index() {
     if (toggleAlarm === true) {
       player.loop = true;
       player.play();
+      setToggleStopwatch(true);
       setTimeout(() => {
         setToggleAlarm(false);
-        setAlarmString("");
       }, 300000);
     } else {
       player.pause();
@@ -93,6 +96,22 @@ export default function Index() {
       return () => loop.stop();
     }
   }, [toggleAlarm]);
+
+  useEffect(() => {
+    if (toggleStopwatch) {
+      const tempStopwatchStorage: string[] = [];
+      const hours = Math.floor(elapsedSeconds / 3600);
+      const minutes = Math.floor((elapsedSeconds % 3600) / 60);
+      const seconds = elapsedSeconds % 60;
+      setTimeout(() => {
+        setElapsedSeconds(elapsedSeconds + 1);
+        tempStopwatchStorage.push(hours.toString().padStart(2, "0"));
+        tempStopwatchStorage.push(minutes.toString().padStart(2, "0"));
+        tempStopwatchStorage.push(seconds.toString().padStart(2, "0"));
+        setStopwatchTime(tempStopwatchStorage.join(":"));
+      }, 1000);
+    }
+  }, [toggleStopwatch, elapsedSeconds]);
 
   const formatTime = ({
     hours,
@@ -176,7 +195,25 @@ export default function Index() {
           </View>
           <View className="flex flex-col gap-3 w-full border items-center border-white/10 rounded-xl py-1 h-28">
             <Text className="font-bold text-lime-300 text-xl">LIVE TIMER</Text>
-            <Text className="font-bold text-lime-200 text-3xl">00:00:00</Text>
+            {stopwatchTime && (
+              <Text className="font-bold text-lime-200 text-3xl">
+                {stopwatchTime}
+              </Text>
+            )}
+            {!stopwatchTime && alarmString && (
+              <Text className="font-bold text-lime-200 text-3xl">
+                Will start at {alarmString}
+                <Text className="font-bold text-lime-200 text-3xl">
+                  {alarmHours <= 12 && <Text> AM</Text>}
+                  {alarmHours > 12 && <Text> PM</Text>}
+                </Text>
+              </Text>
+            )}
+            {!stopwatchTime && !alarmString && (
+              <Text className="font-bold text-lime-200 text-3xl">
+                Set an alarm first
+              </Text>
+            )}
           </View>
           <View className="flex flex-row gap-5 items-center">
             <Text className="text-zinc-50">Goal: Reaching School</Text>
@@ -186,7 +223,13 @@ export default function Index() {
             </View>
           </View>
           <View className="flex flex-row gap-5 items-center justify-between">
-            <Pressable className="bg-lime-300 px-4 py-2 rounded-lg active:bg-lime-400 ">
+            <Pressable
+              className="bg-lime-300 px-4 py-2 rounded-lg active:bg-lime-400"
+              onPress={() => {
+                setToggleStopwatch(false);
+                setStopwatchTime("");
+              }}
+            >
               <Text className="font-semibold">Stop & Save</Text>
             </Pressable>
             <View className="flex flex-row gap-1">
