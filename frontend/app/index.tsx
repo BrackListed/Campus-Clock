@@ -1,3 +1,4 @@
+import { useAudioPlayer } from "expo-audio";
 import {
   AlarmClock,
   Bell,
@@ -11,8 +12,9 @@ import {
   TextAlignJustify,
   User,
 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
+  Animated,
   Image,
   Pressable,
   ScrollView,
@@ -24,11 +26,16 @@ import { TimerPickerModal } from "react-native-timer-picker";
 import "../global.css";
 
 export default function Index() {
-  const [today, setToday] = useState<string | null>(null);
+  const [today, setToday] = useState<Date>();
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const [toggleTimePicker, setToggleTimePicker] = useState(false);
   const [alarmString, setAlarmString] = useState<string | null>(null);
   const [alarmHours, setAlarmHours] = useState(0);
+  const [alarmMinutes, setAlarmMinutes] = useState(0);
+  const [alarmSeconds, setAlarmSeconds] = useState(0);
+  const [toggleAlarm, setToggleAlarm] = useState(false);
+  const player = useAudioPlayer(require("../assets/alarm.mp3"));
+  const pulse = useRef(new Animated.Value(1)).current;
   useEffect(() => {
     function getTime() {
       const unformattedToday = new Date();
@@ -36,15 +43,57 @@ export default function Index() {
         hour: "2-digit",
         minute: "2-digit",
         second: "2-digit",
-        hour12: true,
+        hour12: false,
       });
       setTimeout(() => {
         getTime();
-        setToday(today);
+        setToday(unformattedToday);
       }, 1000);
     }
     getTime();
   }, []);
+  useEffect(() => {
+    const hours = today?.getHours();
+    const minutes = today?.getMinutes();
+    const seconds = today?.getSeconds();
+    if (
+      hours === alarmHours &&
+      minutes === alarmMinutes &&
+      seconds === alarmSeconds
+    ) {
+      setToggleAlarm(true);
+    }
+  }, [today]);
+  useEffect(() => {
+    if (toggleAlarm === true) {
+      player.loop = true;
+      player.play();
+      setTimeout(() => {
+        setToggleAlarm(false);
+        setAlarmString("");
+      }, 300000);
+    } else {
+      player.pause();
+      player.seekTo(0);
+      const loop = Animated.loop(
+        Animated.sequence([
+          Animated.timing(pulse, {
+            toValue: 1.15,
+            duration: 600,
+            useNativeDriver: true,
+          }),
+          Animated.timing(pulse, {
+            toValue: 1,
+            duration: 600,
+            useNativeDriver: true,
+          }),
+        ]),
+      );
+      loop.start();
+      return () => loop.stop();
+    }
+  }, [toggleAlarm]);
+
   const formatTime = ({
     hours,
     minutes,
@@ -61,9 +110,11 @@ export default function Index() {
     }
     if (minutes !== undefined) {
       timeParts.push(minutes.toString().padStart(2, "0"));
+      setAlarmMinutes(minutes);
     }
     if (seconds !== undefined) {
       timeParts.push(seconds.toString().padStart(2, "0"));
+      setAlarmSeconds(seconds);
     }
     return timeParts.join(":");
   };
@@ -290,6 +341,39 @@ export default function Index() {
           use12HourPicker
           visible={toggleTimePicker}
         />
+      )}
+      {toggleAlarm && (
+        <View className="absolute inset-0 z-[60] bg-slate-950/95 flex items-center justify-center px-6">
+          <View className="bg-slate-800 border border-white/10 rounded-2xl p-8 w-full max-w-sm flex flex-col items-center gap-6">
+            <Animated.View style={{ transform: [{ scale: pulse }] }}>
+              <View className="bg-red-500/20 rounded-full p-6">
+                <AlarmClock color="#f87171" size={56} />
+              </View>
+            </Animated.View>
+
+            <View className="flex flex-col items-center gap-1">
+              <Text className="text-red-400 font-bold text-2xl tracking-widest">
+                ALARM
+              </Text>
+              <Text className="text-zinc-400">Time to commute</Text>
+            </View>
+
+            {alarmString && (
+              <Text className="text-zinc-50 font-bold text-4xl">
+                {alarmString} {alarmHours < 12 ? "AM" : "PM"}
+              </Text>
+            )}
+
+            <Pressable
+              onPress={() => setToggleAlarm(false)}
+              className="bg-red-500 active:bg-red-600 rounded-xl w-full py-4 flex items-center justify-center"
+            >
+              <Text className="text-zinc-50 font-bold text-lg">
+                Cancel Alarm
+              </Text>
+            </Pressable>
+          </View>
+        </View>
       )}
     </ScrollView>
   );
