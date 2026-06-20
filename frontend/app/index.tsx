@@ -2,8 +2,14 @@ import {
   AlarmClock,
   Bell,
   Calendar,
+  CalendarClock,
   ChevronDown,
+  History,
+  LogOut,
+  Notebook,
+  Settings,
   TextAlignJustify,
+  User,
 } from "lucide-react-native";
 import { useState } from "react";
 import {
@@ -183,10 +189,31 @@ export default function Index() {
                 </Text>
               </View>
             </Pressable>
-            <View className="flex gap-3 mt-5">
-              <Text className="text-zinc-50">Profile</Text>
-              <Text className="text-zinc-50">Settings</Text>
-              <Text className="text-zinc-50">Logout</Text>
+            <View className="flex gap-5 mt-5">
+              <View className="flex flex-row items-center gap-1">
+                <User color={"white"} size={20} />
+                <Text className="text-zinc-50">Profile</Text>
+              </View>
+              <View className="flex flex-row items-center gap-1">
+                <Notebook color={"white"} size={20} />
+                <Text className="text-zinc-50">Assignments</Text>
+              </View>
+              <View className="flex flex-row items-center gap-1">
+                <History color={"white"} size={20} />
+                <Text className="text-zinc-50">History</Text>
+              </View>
+              <View className="flex flex-row items-center gap-1">
+                <CalendarClock color={"white"} size={20} />
+                <Text className="text-zinc-50">Time Records</Text>
+              </View>
+              <View className="flex flex-row items-center gap-1">
+                <Settings color={"white"} size={20} />
+                <Text className="text-zinc-50">Settings</Text>
+              </View>
+              <View className="flex flex-row items-center gap-1">
+                <LogOut color={"white"} size={20} />
+                <Text className="text-zinc-50">Logout</Text>
+              </View>
             </View>
           </ScrollView>
         </>
