@@ -11,7 +11,7 @@ import {
   TextAlignJustify,
   User,
 } from "lucide-react-native";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   Image,
   Pressable,
@@ -20,12 +20,53 @@ import {
   TextInput,
   View,
 } from "react-native";
+import { TimerPickerModal } from "react-native-timer-picker";
 import "../global.css";
 
 export default function Index() {
   const [time, setTime] = useState(0);
-  const today = new Date();
+  const unformattedToday = new Date();
+  const today = unformattedToday.toLocaleTimeString("en-us", {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    hour12: true,
+  });
+  const isAM = unformattedToday.getHours() < 12;
+  const isPM = unformattedToday.getHours() > 12;
   const [toggleDropdown, setToggleDropdown] = useState(false);
+  const [toggleTimePicker, setToggleTimePicker] = useState(false);
+  const [alarmString, setAlarmString] = useState<string | null>(null);
+  const [alarmHours, setAlarmHours] = useState(0);
+  useEffect(() => {
+    if (alarmString) {
+      setAlarmHours(parseInt(alarmString.slice(0, 2)));
+    }
+  }, [alarmString]);
+  const formatTime = ({
+    hours,
+    minutes,
+    seconds,
+  }: {
+    hours?: number;
+    minutes?: number;
+    seconds?: number;
+  }) => {
+    const timeParts = [];
+
+    if (hours !== undefined) {
+      timeParts.push(hours.toString().padStart(2, "0"));
+    }
+    if (minutes !== undefined) {
+      timeParts.push(minutes.toString().padStart(2, "0"));
+    }
+    if (seconds !== undefined) {
+      timeParts.push(seconds.toString().padStart(2, "0"));
+    }
+
+    return timeParts.join(":");
+  };
+
   return (
     <ScrollView className="flex-1 bg-slate-950 flex flex-col">
       <View className="bg-slate-800/70 h-28 rounded-t-lg flex flex-row items-center justify-between">
@@ -57,12 +98,23 @@ export default function Index() {
         <View className="bg-slate-800/70 rounded-lg border border-white/10 h-fit p-2 flex flex-col gap-1">
           <View className="flex flex-row gap-1 items-center">
             <Text className="text-zinc-50 font-bold text-lg">
-              School Commute Tracker |
+              Commute Tracker |
             </Text>
-            <View className="flex flex-row items-center gap-1">
-              <Text className="text-zinc-50">Start at: 5:00 AM</Text>
-              <ChevronDown color="white" size={16} />
-            </View>
+            <Pressable onPress={() => setToggleTimePicker(!toggleTimePicker)}>
+              <View className="flex flex-row items-center gap-1">
+                {alarmString && (
+                  <Text className="text-zinc-50">
+                    Start at: {alarmString}{" "}
+                    {alarmHours <= 12 && <Text>AM</Text>}{" "}
+                    {alarmHours > 12 && <Text>PM</Text>}
+                  </Text>
+                )}
+                {!alarmString && (
+                  <Text className="text-zinc-50">No alarm set yet!</Text>
+                )}
+                <ChevronDown color="white" size={16} />
+              </View>
+            </Pressable>
           </View>
           <View className="flex flex-row gap-1">
             <Text className="text-zinc-50">Status:</Text>
@@ -72,7 +124,7 @@ export default function Index() {
           </View>
           <View className="flex flex-col gap-3 w-full border items-center border-white/10 rounded-xl py-1 h-28">
             <Text className="font-bold text-lime-300 text-xl">LIVE TIMER</Text>
-            <Text className="font-bold text-lime-200 text-3xl">00:00:000</Text>
+            <Text className="font-bold text-lime-200 text-3xl">00:00:00</Text>
           </View>
           <View className="flex flex-row gap-5 items-center">
             <Text className="text-zinc-50">Goal: Reaching School</Text>
@@ -217,6 +269,26 @@ export default function Index() {
             </View>
           </ScrollView>
         </>
+      )}
+      {toggleTimePicker && (
+        <TimerPickerModal
+          closeOnOverlayPress
+          modalProps={{
+            overlayOpacity: 0.2,
+          }}
+          modalTitle="Set Alarm"
+          onCancel={() => setToggleTimePicker(false)}
+          onConfirm={(pickedDuration) => {
+            setAlarmString(formatTime(pickedDuration));
+            setToggleTimePicker(false);
+          }}
+          setIsVisible={setToggleTimePicker}
+          styles={{
+            theme: "dark",
+          }}
+          use12HourPicker
+          visible={toggleTimePicker}
+        />
       )}
     </ScrollView>
   );
