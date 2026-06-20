@@ -11,7 +11,7 @@ import {
   TextAlignJustify,
   User,
 } from "lucide-react-native";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import {
   Image,
   Pressable,
@@ -37,12 +37,10 @@ export default function Index() {
   const [toggleDropdown, setToggleDropdown] = useState(false);
   const [toggleTimePicker, setToggleTimePicker] = useState(false);
   const [alarmString, setAlarmString] = useState<string | null>(null);
+  const [updatedAlarmString, setUpdatedAlarmString] = useState<string | null>(
+    null,
+  );
   const [alarmHours, setAlarmHours] = useState(0);
-  useEffect(() => {
-    if (alarmString) {
-      setAlarmHours(parseInt(alarmString.slice(0, 2)));
-    }
-  }, [alarmString]);
   const formatTime = ({
     hours,
     minutes,
@@ -53,9 +51,9 @@ export default function Index() {
     seconds?: number;
   }) => {
     const timeParts = [];
-
     if (hours !== undefined) {
-      timeParts.push(hours.toString().padStart(2, "0"));
+      timeParts.push((hours % 12).toString().padStart(2, "0"));
+      setAlarmHours(hours);
     }
     if (minutes !== undefined) {
       timeParts.push(minutes.toString().padStart(2, "0"));
