@@ -1,13 +1,14 @@
+import { clerkMiddleware } from "@clerk/express";
+import { createClient } from "@libsql/client";
 import cors from "cors";
 import "dotenv/config";
-import { drizzle } from "drizzle-orm/node-postgres";
+import { drizzle } from "drizzle-orm/singlestore/driver";
 import express from "express";
-import { Pool } from "pg";
 
 const app = express();
-const pool = new Pool({ connectionString: process.env.DATABASE_URL });
-const db = drizzle(process.env.DATABASE_URL!);
-
+const client = createClient({ url: `file:sqlite.db` });
+const db = drizzle(client);
+app.use(clerkMiddleware());
 // Dynamically handles your local dev or your deployed Render frontend URL
 const allowedOrigin = process.env.FRONTEND_URL || "http://localhost:5173";
 
