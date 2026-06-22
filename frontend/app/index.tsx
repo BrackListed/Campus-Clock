@@ -32,6 +32,9 @@ export default function Index() {
   const [stopwatchTime, setStopwatchTime] = useState<string>();
   const [timeStorage, setTimeStorage] = useState<string[]>([]);
   const [rawTimeStorage, setRawTimeStorage] = useState<number[]>([]);
+  const [sum, setSum] = useState(0);
+  const [average, setAverage] = useState(0);
+
   useEffect(() => {
     function getTime() {
       const unformattedToday = new Date();
@@ -57,7 +60,16 @@ export default function Index() {
         return null;
       }
     };
+    const getAverage = async () => {
+      let tempSum = 0;
+      timeStorage.map((item) => {
+        tempSum += Number(item);
+        setSum(tempSum);
+        setAverage(tempSum / timeStorage.length);
+      });
+    };
     getTimeRecords();
+    getAverage();
   }, []);
   useEffect(() => {
     const hours = today?.getHours();
@@ -222,7 +234,17 @@ export default function Index() {
               </Pressable>
               <View className="flex flex-row gap-1">
                 <Text className="text-zinc-50">Avg:</Text>
-                <Text className="text-lime-300">0 Mins</Text>
+                <Text className="text-lime-300">
+                  {average <= 60 && (
+                    <Text>{Math.floor(average % 60)} seconds</Text>
+                  )}
+                  {average >= 60 && average < 3600 && (
+                    <Text>{Math.floor((average % 3600) / 60)} minutes</Text>
+                  )}
+                  {average >= 3600 && (
+                    <Text>{Math.floor(average / 3600)} Hours</Text>
+                  )}
+                </Text>
               </View>
             </View>
           </View>
