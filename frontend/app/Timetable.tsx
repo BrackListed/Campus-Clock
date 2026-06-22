@@ -52,9 +52,17 @@ export default function Timetable() {
                   <Text className="text-lg font-semibold text-white">
                     Record {index + 1}
                   </Text>
-                  <View className="rounded-full bg-cyan-500/15 px-3 py-1">
-                    <Text className="text-xs font-semibold text-cyan-300">
-                      Saved
+                  <View className="flex-row items-center gap-2">
+                    <View className="rounded-full bg-cyan-500/15 px-3 py-1">
+                      <Text className="text-xs font-semibold text-cyan-300">
+                        Saved
+                      </Text>
+                    </View>
+                    <Text
+                      onPress={() => removeRecord(index)}
+                      className="rounded-full px-2 py-1 text-sm font-bold text-red-400"
+                    >
+                      X
                     </Text>
                   </View>
                 </View>
@@ -70,4 +78,11 @@ export default function Timetable() {
       {toggleDropdown && <Left setToggleDropdown={setToggleDropdown} />}
     </SafeAreaView>
   );
+  function removeRecord(index: number) {
+    const newRecords = timeStorage.filter((_, i) => i !== index);
+    setTimeStorage(newRecords);
+    AsyncStorage.setItem("timerecords", JSON.stringify(newRecords)).catch(
+      (err) => console.error("Failed to save timerecords:", err),
+    );
+  }
 }
