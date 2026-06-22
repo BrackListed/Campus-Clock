@@ -1,3 +1,4 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useAudioPlayer } from "expo-audio";
 import { AlarmClock, Calendar, ChevronDown } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
@@ -29,6 +30,8 @@ export default function Index() {
   const pulse = useRef(new Animated.Value(1)).current;
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [stopwatchTime, setStopwatchTime] = useState<string>();
+  const [timeStorage, setTimeStorage] = useState<string[]>([]);
+
   useEffect(() => {
     function getTime() {
       const unformattedToday = new Date();
@@ -44,6 +47,17 @@ export default function Index() {
       }, 1000);
     }
     getTime();
+    const getTimeRecords = async () => {
+      try {
+        const timeRecords = await AsyncStorage.getItem("timerecords");
+        setTimeStorage(timeRecords ? JSON.parse(timeRecords) : []);
+        return timeRecords;
+      } catch (error) {
+        console.error("Failed to get timerecords:", error);
+        return null;
+      }
+    };
+    getTimeRecords();
   }, []);
   useEffect(() => {
     const hours = today?.getHours();
@@ -200,6 +214,8 @@ export default function Index() {
                 onPress={() => {
                   setToggleStopwatch(false);
                   setStopwatchTime("");
+                  saveTime(stopwatchTime, elapsedSeconds);
+                  alert("Elapsed Seconds: " + elapsedSeconds);
                 }}
               >
                 <Text className="font-semibold">Stop & Save</Text>
@@ -351,4 +367,13 @@ export default function Index() {
       </ScrollView>
     </SafeAreaView>
   );
+
+  async function saveTime(time: string | undefined, rawTime: number) {
+    const updatedTimeRecords = [...timeStorage, time ?? ""];
+    setTimeStorage(updatedTimeRecords);
+    await AsyncStorage.setItem(
+      "timerecords",
+      JSON.stringify(updatedTimeRecords),
+    );
+  }
 }
