@@ -1,21 +1,8 @@
 import { useAudioPlayer } from "expo-audio";
-import {
-  AlarmClock,
-  Bell,
-  Calendar,
-  CalendarClock,
-  ChevronDown,
-  History,
-  LogOut,
-  Notebook,
-  Settings,
-  TextAlignJustify,
-  User,
-} from "lucide-react-native";
+import { AlarmClock, Calendar, ChevronDown } from "lucide-react-native";
 import { useEffect, useRef, useState } from "react";
 import {
   Animated,
-  Image,
   Pressable,
   ScrollView,
   Text,
@@ -25,6 +12,8 @@ import {
 import { SafeAreaView } from "react-native-safe-area-context";
 import { TimerPickerModal } from "react-native-timer-picker";
 import "../global.css";
+import Header from "./_components/Header";
+import Left from "./_components/Left";
 
 export default function Index() {
   const [today, setToday] = useState<Date>();
@@ -142,31 +131,10 @@ export default function Index() {
   return (
     <SafeAreaView className="flex-1 bg-slate-950 flex flex-col">
       <ScrollView>
-        <View className="bg-slate-800/70 h-28 rounded-t-lg flex flex-row items-center justify-between">
-          <View className="flex-row gap-2 px-4 py-3 h-full w-1/2 items-center">
-            <TextAlignJustify
-              color="white"
-              size={20}
-              onPress={() => setToggleDropdown(!toggleDropdown)}
-            />
-            <Pressable onPress={() => setToggleDropdown(!toggleDropdown)}>
-              <Image
-                source={require("../assets/images/Campus-Clock-logo.png")}
-                className="w-12 h-full"
-                resizeMode="contain"
-              />
-            </Pressable>
-            <Text className="text-zinc-50 font-semibold">CAMPUS CLOCK</Text>
-          </View>
-          <View className="flex-row gap-3 flex justify-end px-4 py-3 items-center text-zinc-50">
-            <Image
-              source={require("../assets/images/esquie.jpg")}
-              className="w-10 h-10 rounded-full"
-              resizeMode="contain"
-            />
-            <Bell fill={"white"} color={"white"} />
-          </View>
-        </View>
+        <Header
+          toggleDropdown={toggleDropdown}
+          setToggleDropdown={setToggleDropdown}
+        />
         <View className="flex-col flex px-3 py-2 text-zinc-50 overflow-y-auto">
           <View className="bg-slate-800/70 rounded-lg border border-white/10 h-fit p-2 flex flex-col gap-1">
             <View className="flex flex-row gap-1 items-center">
@@ -324,51 +292,7 @@ export default function Index() {
         </View>
         {toggleDropdown && (
           <>
-            <Pressable
-              className="absolute inset-0 bg-black/60 z-40"
-              onPress={() => setToggleDropdown(false)}
-            ></Pressable>
-            <ScrollView className="absolute top-0 left-0 bottom-0 w-64 bg-slate-800 border-r border-white/10 p-4 z-50">
-              <Pressable onPress={() => setToggleDropdown(false)}>
-                <View className="flex-row flex gap-2 h-20 items-center">
-                  <TextAlignJustify color={"white"} size={16} />
-                  <Image
-                    source={require("../assets/images/Campus-Clock-logo.png")}
-                    className="w-12 h-full"
-                    resizeMode="contain"
-                  ></Image>
-                  <Text className="text-zinc-50 text-semibold text-xl">
-                    Campus Clock
-                  </Text>
-                </View>
-              </Pressable>
-              <View className="flex gap-5 mt-5">
-                <View className="flex flex-row items-center gap-1">
-                  <User color={"white"} size={20} />
-                  <Text className="text-zinc-50">Profile</Text>
-                </View>
-                <View className="flex flex-row items-center gap-1">
-                  <Notebook color={"white"} size={20} />
-                  <Text className="text-zinc-50">Assignments</Text>
-                </View>
-                <View className="flex flex-row items-center gap-1">
-                  <History color={"white"} size={20} />
-                  <Text className="text-zinc-50">History</Text>
-                </View>
-                <View className="flex flex-row items-center gap-1">
-                  <CalendarClock color={"white"} size={20} />
-                  <Text className="text-zinc-50">Time Records</Text>
-                </View>
-                <View className="flex flex-row items-center gap-1">
-                  <Settings color={"white"} size={20} />
-                  <Text className="text-zinc-50">Settings</Text>
-                </View>
-                <View className="flex flex-row items-center gap-1">
-                  <LogOut color={"white"} size={20} />
-                  <Text className="text-zinc-50">Logout</Text>
-                </View>
-              </View>
-            </ScrollView>
+            <Left setToggleDropdown={setToggleDropdown} />
           </>
         )}
         {toggleTimePicker && (
