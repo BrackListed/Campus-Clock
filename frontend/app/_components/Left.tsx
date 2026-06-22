@@ -2,6 +2,7 @@ import { Link } from "expo-router";
 import {
     CalendarClock,
     History,
+    Home,
     LogOut,
     Notebook,
     Settings,
@@ -37,6 +38,12 @@ export default function Left({ setToggleDropdown }: LeftProps) {
           </View>
         </Pressable>
         <View className="flex gap-5 mt-5">
+          <Link href={"/"}>
+            <View className="flex flex-row items-center gap-1">
+              <Home color="white" size={20} />
+              <Text className="text-zinc-50">Home</Text>
+            </View>
+          </Link>
           <View className="flex flex-row items-center gap-1">
             <User color="white" size={20} />
             <Text className="text-zinc-50">Profile</Text>
