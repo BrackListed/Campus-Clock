@@ -15,15 +15,25 @@ export default function Timetable() {
       try {
         const timeRecords = await AsyncStorage.getItem("timerecords");
         setTimeStorage(timeRecords ? JSON.parse(timeRecords) : []);
-        return timeRecords;
       } catch (error) {
         console.error("Failed to get timerecords:", error);
-        return null;
       }
     };
     getTimeRecords();
   }, []);
   const [toggleDropdown, setToggleDropdown] = useState(false);
+  const timeFormat = timeStorage.map((time) => {
+    const totalSeconds = Number(time);
+    const hours = Math.floor(totalSeconds / 3600)
+      .toString()
+      .padStart(2, "0");
+    const minutes = Math.floor((totalSeconds % 3600) / 60)
+      .toString()
+      .padStart(2, "0");
+    const seconds = (totalSeconds % 60).toString().padStart(2, "0");
+
+    return `${hours}:${minutes}:${seconds}`;
+  });
   return (
     <SafeAreaView className="flex-1 bg-slate-950 flex flex-col">
       <ScrollView
@@ -43,7 +53,7 @@ export default function Timetable() {
               </Text>
             </View>
           ) : (
-            timeStorage.map((record, index) => (
+            timeFormat.map((record, index) => (
               <View
                 key={`${record}-${index}`}
                 className="mb-3 rounded-2xl border border-slate-800 bg-slate-900 px-4 py-4"

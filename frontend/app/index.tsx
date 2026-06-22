@@ -31,7 +31,7 @@ export default function Index() {
   const [elapsedSeconds, setElapsedSeconds] = useState(0);
   const [stopwatchTime, setStopwatchTime] = useState<string>();
   const [timeStorage, setTimeStorage] = useState<string[]>([]);
-
+  const [rawTimeStorage, setRawTimeStorage] = useState<number[]>([]);
   useEffect(() => {
     function getTime() {
       const unformattedToday = new Date();
@@ -221,7 +221,7 @@ export default function Index() {
                 <Text className="font-semibold">Stop & Save</Text>
               </Pressable>
               <View className="flex flex-row gap-1">
-                <Text className="text-zinc-50">Weekly Avg:</Text>
+                <Text className="text-zinc-50">Avg:</Text>
                 <Text className="text-lime-300">0 Mins</Text>
               </View>
             </View>
@@ -369,11 +369,11 @@ export default function Index() {
   );
 
   async function saveTime(time: string | undefined, rawTime: number) {
-    const updatedTimeRecords = [...timeStorage, time ?? ""];
-    setTimeStorage(updatedTimeRecords);
+    const updatedRawTimeRecords = [...rawTimeStorage, rawTime ?? ""];
+    setRawTimeStorage(updatedRawTimeRecords);
     await AsyncStorage.setItem(
       "timerecords",
-      JSON.stringify(updatedTimeRecords),
+      JSON.stringify(updatedRawTimeRecords),
     );
   }
 }
